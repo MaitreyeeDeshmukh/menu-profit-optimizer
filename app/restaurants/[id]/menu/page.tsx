@@ -4,10 +4,22 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Restaurant, MenuItem } from "@/lib/supabase";
-import { formatCurrency, calculateMargin, getMarginBg } from "@/lib/utils";
+import { formatCurrency, calculateMargin } from "@/lib/utils";
 import { ArrowLeft, Plus, Trash2, TrendingUp, ChefHat, Upload } from "lucide-react";
 
 const CATEGORIES = ["Appetizer", "Main", "Dessert", "Beverage", "Side", "Special", "Other"];
+
+function MarginBadge({ margin }: { margin: number }) {
+  const bg = margin >= 70 ? "#22c55e" : margin >= 50 ? "#FFD93D" : "#FF6B6B";
+  return (
+    <span
+      className="text-xs font-black uppercase tracking-wide px-2 py-1 border-2 border-black"
+      style={{ background: bg }}
+    >
+      {margin}%
+    </span>
+  );
+}
 
 export default function MenuPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -62,7 +74,7 @@ export default function MenuPage({ params }: { params: Promise<{ id: string }> }
 
   async function importCsv() {
     setSaving(true);
-    const lines = csvText.trim().split("\n").slice(1); // skip header
+    const lines = csvText.trim().split("\n").slice(1);
     const parsed = lines.map((line) => {
       const [name, category, cost_price, selling_price, description] = line.split(",").map((s) => s.trim().replace(/^"|"$/g, ""));
       return { name, category: category || "Main", cost_price: parseFloat(cost_price) || 0, selling_price: parseFloat(selling_price) || 0, description: description || "" };
@@ -90,57 +102,75 @@ export default function MenuPage({ params }: { params: Promise<{ id: string }> }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: "#FFFDF5" }}
+      >
+        <div
+          className="w-10 h-10 border-4 border-black animate-spin"
+          style={{ borderTopColor: "#FF6B6B" }}
+        />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+    <div className="min-h-screen" style={{ background: "#FFFDF5", fontFamily: "'Space Grotesk', sans-serif" }}>
+      {/* Nav */}
+      <nav
+        className="px-6 py-3 flex items-center justify-between border-b-4 border-black"
+        style={{ background: "#FFFDF5" }}
+      >
         <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-            <ArrowLeft className="w-4 h-4" />
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 font-black uppercase tracking-wide text-sm text-black border-4 border-black px-3 py-2 transition-all duration-100 hover:bg-black hover:text-white"
+          >
+            <ArrowLeft className="w-4 h-4" strokeWidth={3} />
             Dashboard
           </Link>
           <div className="flex items-center gap-2">
-            <ChefHat className="w-5 h-5 text-orange-500" />
-            <span className="font-semibold text-gray-900">{restaurant?.name}</span>
-            <span className="text-gray-400">/</span>
-            <span className="text-gray-600">Menu</span>
+            <ChefHat className="w-5 h-5 text-black" strokeWidth={3} />
+            <span className="font-black text-black">{restaurant?.name}</span>
+            <span className="font-black text-black">/</span>
+            <span className="font-bold text-black uppercase tracking-wide text-sm">Menu</span>
           </div>
         </div>
         {items.length > 0 && (
           <Link
             href={`/restaurants/${id}`}
-            className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors"
+            className="btn-push flex items-center gap-2 px-4 py-2 border-4 border-black text-sm font-black uppercase tracking-wide text-black"
+            style={{ background: "#FF6B6B", boxShadow: "4px 4px 0px 0px #000" }}
           >
-            <TrendingUp className="w-4 h-4" />
+            <TrendingUp className="w-4 h-4" strokeWidth={3} />
             Analyze with AI
           </Link>
         )}
       </nav>
 
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Menu Items</h1>
-            <p className="text-gray-500 mt-1">{items.length} items · {restaurant?.cuisine_type}</p>
+            <h1 className="text-3xl font-black uppercase tracking-tight text-black">Menu Items</h1>
+            <p className="font-bold text-black mt-1 uppercase tracking-wide text-sm">
+              {items.length} items &middot; {restaurant?.cuisine_type}
+            </p>
           </div>
           <div className="flex gap-3">
             <button
               onClick={() => { setShowCsv(!showCsv); setShowForm(false); }}
-              className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="btn-push flex items-center gap-2 px-4 py-2 border-4 border-black text-sm font-black uppercase tracking-wide text-black"
+              style={{ background: "#C4B5FD", boxShadow: "4px 4px 0px 0px #000" }}
             >
-              <Upload className="w-4 h-4" />
+              <Upload className="w-4 h-4" strokeWidth={3} />
               Import CSV
             </button>
             <button
               onClick={() => { setShowForm(!showForm); setShowCsv(false); }}
-              className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors"
+              className="btn-push flex items-center gap-2 px-4 py-2 border-4 border-black text-sm font-black uppercase tracking-wide text-black"
+              style={{ background: "#FFD93D", boxShadow: "4px 4px 0px 0px #000" }}
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4" strokeWidth={3} />
               Add Item
             </button>
           </div>
@@ -148,85 +178,181 @@ export default function MenuPage({ params }: { params: Promise<{ id: string }> }
 
         {/* CSV Import */}
         {showCsv && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-2">Import from CSV</h3>
-            <p className="text-sm text-gray-500 mb-4">
-              Format: <code className="bg-gray-100 px-1 rounded">name, category, cost_price, selling_price, description</code>
-            </p>
-            <textarea
-              value={csvText}
-              onChange={(e) => setCsvText(e.target.value)}
-              placeholder="name,category,cost_price,selling_price,description&#10;Burger,Main,4.50,14.99,Classic beef burger&#10;Fries,Side,1.00,4.99,Crispy golden fries"
-              rows={6}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm font-mono text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none mb-4"
-            />
-            <div className="flex gap-3">
-              <button onClick={importCsv} disabled={saving || !csvText.trim()} className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50">
-                {saving ? "Importing..." : "Import"}
-              </button>
-              <button onClick={() => setShowCsv(false)} className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
-                Cancel
-              </button>
+          <div
+            className="border-4 border-black mb-6"
+            style={{ boxShadow: "6px 6px 0px 0px #000" }}
+          >
+            <div
+              className="px-5 py-3 border-b-4 border-black"
+              style={{ background: "#C4B5FD" }}
+            >
+              <h3 className="font-black uppercase tracking-wide text-black">Import from CSV</h3>
+            </div>
+            <div className="p-6 bg-white">
+              <p className="text-sm font-semibold text-black mb-4">
+                Format:{" "}
+                <code
+                  className="px-2 py-0.5 border-2 border-black font-mono text-xs"
+                  style={{ background: "#FFD93D" }}
+                >
+                  name, category, cost_price, selling_price, description
+                </code>
+              </p>
+              <textarea
+                value={csvText}
+                onChange={(e) => setCsvText(e.target.value)}
+                placeholder={"name,category,cost_price,selling_price,description\nBurger,Main,4.50,14.99,Classic beef burger\nFries,Side,1.00,4.99,Crispy golden fries"}
+                rows={6}
+                className="w-full px-4 py-3 border-4 border-black text-sm font-mono text-black placeholder-gray-400 transition-all duration-100 resize-none mb-4"
+                style={{ background: "#FFFDF5" }}
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={importCsv}
+                  disabled={saving || !csvText.trim()}
+                  className="btn-push px-4 py-2 border-4 border-black text-sm font-black uppercase tracking-wide text-black disabled:opacity-50"
+                  style={{ background: "#FF6B6B", boxShadow: "4px 4px 0px 0px #000" }}
+                >
+                  {saving ? "Importing..." : "Import"}
+                </button>
+                <button
+                  onClick={() => setShowCsv(false)}
+                  className="btn-push px-4 py-2 border-4 border-black text-sm font-black uppercase tracking-wide text-black"
+                  style={{ background: "#FFFDF5", boxShadow: "4px 4px 0px 0px #000" }}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         )}
 
         {/* Add Item Form */}
         {showForm && (
-          <form onSubmit={addItem} className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Add Menu Item</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Classic Burger" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
-                  {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-                </select>
-              </div>
-              <div className="flex items-center gap-2 pt-6">
-                <input type="checkbox" id="popular" checked={form.is_popular} onChange={(e) => setForm({ ...form, is_popular: e.target.checked })} className="accent-orange-500" />
-                <label htmlFor="popular" className="text-sm text-gray-700">Popular item</label>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Cost Price ($)</label>
-                <input type="number" step="0.01" min="0" required value={form.cost_price} onChange={(e) => setForm({ ...form, cost_price: e.target.value })} placeholder="4.50" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price ($)</label>
-                <input type="number" step="0.01" min="0" required value={form.selling_price} onChange={(e) => setForm({ ...form, selling_price: e.target.value })} placeholder="14.99" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
-              </div>
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
-              </div>
-              {form.cost_price && form.selling_price && (
-                <div className="col-span-2">
-                  <span className="text-sm text-gray-500">Margin: </span>
-                  <span className={`text-sm font-semibold ${calculateMargin(parseFloat(form.cost_price), parseFloat(form.selling_price)) >= 70 ? "text-green-600" : calculateMargin(parseFloat(form.cost_price), parseFloat(form.selling_price)) >= 50 ? "text-yellow-600" : "text-red-600"}`}>
-                    {calculateMargin(parseFloat(form.cost_price), parseFloat(form.selling_price))}%
-                  </span>
-                </div>
-              )}
+          <form
+            onSubmit={addItem}
+            className="border-4 border-black mb-6"
+            style={{ boxShadow: "6px 6px 0px 0px #000" }}
+          >
+            <div
+              className="px-5 py-3 border-b-4 border-black"
+              style={{ background: "#FFD93D" }}
+            >
+              <h3 className="font-black uppercase tracking-wide text-black">Add Menu Item</h3>
             </div>
-            <div className="flex gap-3 mt-4">
-              <button type="submit" disabled={saving} className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50">
-                {saving ? "Saving..." : "Add Item"}
-              </button>
-              <button type="button" onClick={() => setShowForm(false)} className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
-                Cancel
-              </button>
+            <div className="p-6 bg-white">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className="block text-xs font-black uppercase tracking-wide text-black mb-1">Name *</label>
+                  <input
+                    required
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="e.g. Classic Burger"
+                    className="w-full px-3 py-2 border-4 border-black text-sm font-semibold text-black transition-all duration-100"
+                    style={{ background: "#FFFDF5" }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wide text-black mb-1">Category</label>
+                  <select
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    className="w-full px-3 py-2 border-4 border-black text-sm font-semibold text-black transition-all duration-100 appearance-none"
+                    style={{ background: "#FFFDF5" }}
+                  >
+                    {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 pt-5">
+                  <input
+                    type="checkbox"
+                    id="popular"
+                    checked={form.is_popular}
+                    onChange={(e) => setForm({ ...form, is_popular: e.target.checked })}
+                    className="w-5 h-5 border-2 border-black accent-black"
+                  />
+                  <label htmlFor="popular" className="text-sm font-bold text-black uppercase tracking-wide">Popular item</label>
+                </div>
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wide text-black mb-1">Cost Price ($)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    required
+                    value={form.cost_price}
+                    onChange={(e) => setForm({ ...form, cost_price: e.target.value })}
+                    placeholder="4.50"
+                    className="w-full px-3 py-2 border-4 border-black text-sm font-semibold text-black transition-all duration-100"
+                    style={{ background: "#FFFDF5" }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wide text-black mb-1">Selling Price ($)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    required
+                    value={form.selling_price}
+                    onChange={(e) => setForm({ ...form, selling_price: e.target.value })}
+                    placeholder="14.99"
+                    className="w-full px-3 py-2 border-4 border-black text-sm font-semibold text-black transition-all duration-100"
+                    style={{ background: "#FFFDF5" }}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-black uppercase tracking-wide text-black mb-1">Description</label>
+                  <input
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    placeholder="Brief description..."
+                    className="w-full px-3 py-2 border-4 border-black text-sm font-semibold text-black transition-all duration-100"
+                    style={{ background: "#FFFDF5" }}
+                  />
+                </div>
+                {form.cost_price && form.selling_price && (
+                  <div className="col-span-2 flex items-center gap-2">
+                    <span className="text-sm font-bold text-black uppercase tracking-wide">Margin:</span>
+                    <MarginBadge margin={calculateMargin(parseFloat(form.cost_price), parseFloat(form.selling_price))} />
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-3 mt-4">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="btn-push px-5 py-2 border-4 border-black text-sm font-black uppercase tracking-wide text-black disabled:opacity-50"
+                  style={{ background: "#FF6B6B", boxShadow: "4px 4px 0px 0px #000" }}
+                >
+                  {saving ? "Saving..." : "Add Item"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="btn-push px-5 py-2 border-4 border-black text-sm font-black uppercase tracking-wide text-black"
+                  style={{ background: "#FFFDF5", boxShadow: "4px 4px 0px 0px #000" }}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </form>
         )}
 
         {/* Menu Items */}
         {items.length === 0 ? (
-          <div className="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center">
-            <p className="text-gray-400 mb-4">No menu items yet</p>
-            <button onClick={() => setShowForm(true)} className="text-orange-500 font-medium text-sm hover:underline">
+          <div
+            className="border-4 border-black border-dashed p-12 text-center"
+            style={{ background: "#fff" }}
+          >
+            <p className="font-bold uppercase tracking-wide text-black mb-4">No menu items yet</p>
+            <button
+              onClick={() => setShowForm(true)}
+              className="btn-push px-5 py-2 border-4 border-black text-sm font-black uppercase tracking-wide text-black"
+              style={{ background: "#FFD93D", boxShadow: "4px 4px 0px 0px #000" }}
+            >
               Add your first item
             </button>
           </div>
@@ -234,35 +360,60 @@ export default function MenuPage({ params }: { params: Promise<{ id: string }> }
           <div className="space-y-6">
             {Object.entries(grouped).map(([category, catItems]) => (
               <div key={category}>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">{category}</h3>
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <h3
+                  className="text-xs font-black uppercase tracking-widest text-black mb-3 px-3 py-1 border-2 border-black inline-block"
+                  style={{ background: "#FFD93D" }}
+                >
+                  {category}
+                </h3>
+                <div
+                  className="border-4 border-black overflow-hidden"
+                  style={{ boxShadow: "6px 6px 0px 0px #000" }}
+                >
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-200">
+                    <thead
+                      className="border-b-4 border-black"
+                      style={{ background: "#000" }}
+                    >
                       <tr>
-                        <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Item</th>
-                        <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Cost</th>
-                        <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Price</th>
-                        <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Margin</th>
+                        <th className="text-left px-4 py-3 text-xs font-black uppercase tracking-wider text-white">Item</th>
+                        <th className="text-right px-4 py-3 text-xs font-black uppercase tracking-wider text-white">Cost</th>
+                        <th className="text-right px-4 py-3 text-xs font-black uppercase tracking-wider text-white">Price</th>
+                        <th className="text-right px-4 py-3 text-xs font-black uppercase tracking-wider text-white">Margin</th>
                         <th className="px-4 py-3" />
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {catItems.map((item) => {
+                    <tbody>
+                      {catItems.map((item, idx) => {
                         const margin = calculateMargin(item.cost_price, item.selling_price);
                         return (
-                          <tr key={item.id} className="hover:bg-gray-50">
+                          <tr
+                            key={item.id}
+                            className="border-b-2 border-black last:border-b-0"
+                            style={{ background: idx % 2 === 0 ? "#FFFDF5" : "#fff" }}
+                          >
                             <td className="px-4 py-3">
-                              <div className="font-medium text-gray-900 text-sm">{item.name}</div>
-                              {item.is_popular && <span className="text-xs text-orange-500">Popular</span>}
+                              <div className="font-bold text-black text-sm">{item.name}</div>
+                              {item.is_popular && (
+                                <span
+                                  className="text-xs font-black uppercase tracking-wide px-2 py-0.5 border-2 border-black"
+                                  style={{ background: "#FFD93D" }}
+                                >
+                                  Popular
+                                </span>
+                              )}
                             </td>
-                            <td className="px-4 py-3 text-right text-sm text-gray-600">{formatCurrency(item.cost_price)}</td>
-                            <td className="px-4 py-3 text-right text-sm font-medium text-gray-900">{formatCurrency(item.selling_price)}</td>
+                            <td className="px-4 py-3 text-right text-sm font-semibold text-black">{formatCurrency(item.cost_price)}</td>
+                            <td className="px-4 py-3 text-right text-sm font-black text-black">{formatCurrency(item.selling_price)}</td>
                             <td className="px-4 py-3 text-right">
-                              <span className={`text-xs font-medium px-2 py-1 rounded-full ${getMarginBg(margin)}`}>{margin}%</span>
+                              <MarginBadge margin={margin} />
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <button onClick={() => deleteItem(item.id)} className="text-gray-400 hover:text-red-500 transition-colors">
-                                <Trash2 className="w-4 h-4" />
+                              <button
+                                onClick={() => deleteItem(item.id)}
+                                className="p-1 border-2 border-black bg-white transition-all duration-100 hover:bg-red-500"
+                              >
+                                <Trash2 className="w-4 h-4 text-black" strokeWidth={3} />
                               </button>
                             </td>
                           </tr>
@@ -274,12 +425,13 @@ export default function MenuPage({ params }: { params: Promise<{ id: string }> }
               </div>
             ))}
 
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-2">
               <button
                 onClick={() => router.push(`/restaurants/${id}`)}
-                className="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors"
+                className="btn-push flex items-center gap-2 px-6 py-3 border-4 border-black font-black uppercase tracking-wider text-black"
+                style={{ background: "#FF6B6B", boxShadow: "6px 6px 0px 0px #000" }}
               >
-                <TrendingUp className="w-5 h-5" />
+                <TrendingUp className="w-5 h-5" strokeWidth={3} />
                 Analyze This Menu with AI
               </button>
             </div>

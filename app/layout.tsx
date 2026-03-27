@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -21,8 +22,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
-        <body className="min-h-full flex flex-col">{children}</body>
+      <html lang="en" className={`${spaceGrotesk.variable} h-full`}>
+        <body className="min-h-full flex flex-col" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{children}</body>
       </html>
     </ClerkProvider>
   );

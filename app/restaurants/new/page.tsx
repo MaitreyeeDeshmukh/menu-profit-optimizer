@@ -44,98 +44,131 @@ export default function NewRestaurantPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 px-6 py-3 flex items-center gap-4">
-        <Link href="/dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-          <ArrowLeft className="w-4 h-4" />
+    <div className="min-h-screen" style={{ background: "#FFFDF5", fontFamily: "'Space Grotesk', sans-serif" }}>
+      {/* Nav */}
+      <nav
+        className="px-6 py-3 flex items-center gap-4 border-b-4 border-black"
+        style={{ background: "#FFFDF5" }}
+      >
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 font-black uppercase tracking-wide text-sm text-black border-4 border-black px-3 py-2 transition-all duration-100 hover:bg-black hover:text-white"
+        >
+          <ArrowLeft className="w-4 h-4" strokeWidth={3} />
           Back
         </Link>
         <div className="flex items-center gap-2">
-          <ChefHat className="w-6 h-6 text-orange-500" />
-          <span className="font-bold text-gray-900">Menu Profit Optimizer</span>
+          <div
+            className="flex items-center justify-center w-8 h-8 border-4 border-black"
+            style={{ background: "#FFD93D", boxShadow: "3px 3px 0px 0px #000" }}
+          >
+            <ChefHat className="w-4 h-4 text-black" strokeWidth={3} />
+          </div>
+          <span className="font-black uppercase tracking-tight text-black">Menu Profit Optimizer</span>
         </div>
       </nav>
 
       <div className="max-w-xl mx-auto px-6 py-12">
-        <div className="bg-white rounded-2xl border border-gray-200 p-8">
-          <div className="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mb-6">
-            <ChefHat className="w-7 h-7 text-orange-500" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Add a Restaurant</h1>
-          <p className="text-gray-500 mb-8">
-            Enter your restaurant details to get started with menu analysis.
-          </p>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Restaurant Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="e.g. The Golden Spoon"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Cuisine Type
-              </label>
-              <select
-                value={form.cuisine_type}
-                onChange={(e) => setForm({ ...form, cuisine_type: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
-              >
-                {CUISINE_TYPES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Location
-              </label>
-              <input
-                type="text"
-                value={form.location}
-                onChange={(e) => setForm({ ...form, location: e.target.value })}
-                placeholder="e.g. Austin, TX"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Description (optional)
-              </label>
-              <textarea
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="Brief description of your restaurant..."
-                rows={3}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        {/* Decorative offset box */}
+        <div className="relative">
+          <div
+            className="absolute inset-0 border-4 border-black"
+            style={{ background: "#FFD93D", transform: "translate(8px, 8px)" }}
+          />
+          <div
+            className="relative border-4 border-black p-8"
+            style={{ background: "#fff", boxShadow: "8px 8px 0px 0px #000" }}
+          >
+            <div
+              className="w-14 h-14 border-4 border-black flex items-center justify-center mb-6"
+              style={{ background: "#FF6B6B", boxShadow: "4px 4px 0px 0px #000" }}
             >
-              {loading ? "Creating..." : "Create Restaurant & Add Menu"}
-            </button>
-          </form>
+              <ChefHat className="w-7 h-7 text-black" strokeWidth={3} />
+            </div>
+            <h1 className="text-3xl font-black uppercase tracking-tight text-black mb-2">Add a Restaurant</h1>
+            <p className="font-semibold text-black mb-8">
+              Enter your restaurant details to get started with menu analysis.
+            </p>
+
+            {error && (
+              <div
+                className="border-4 border-black px-4 py-3 mb-6 font-bold text-black"
+                style={{ background: "#FF6B6B", boxShadow: "4px 4px 0px 0px #000" }}
+              >
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="block text-sm font-black uppercase tracking-wide text-black mb-2">
+                  Restaurant Name <span style={{ color: "#FF6B6B" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  placeholder="e.g. The Golden Spoon"
+                  className="w-full px-4 h-14 border-4 border-black text-black font-semibold placeholder-gray-400 transition-all duration-100"
+                  style={{ background: "#FFFDF5" }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-black uppercase tracking-wide text-black mb-2">
+                  Cuisine Type
+                </label>
+                <select
+                  value={form.cuisine_type}
+                  onChange={(e) => setForm({ ...form, cuisine_type: e.target.value })}
+                  className="w-full px-4 h-14 border-4 border-black text-black font-semibold transition-all duration-100 appearance-none"
+                  style={{ background: "#FFFDF5" }}
+                >
+                  {CUISINE_TYPES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-black uppercase tracking-wide text-black mb-2">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={form.location}
+                  onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  placeholder="e.g. Austin, TX"
+                  className="w-full px-4 h-14 border-4 border-black text-black font-semibold placeholder-gray-400 transition-all duration-100"
+                  style={{ background: "#FFFDF5" }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-black uppercase tracking-wide text-black mb-2">
+                  Description (optional)
+                </label>
+                <textarea
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  placeholder="Brief description of your restaurant..."
+                  rows={3}
+                  className="w-full px-4 py-3 border-4 border-black text-black font-semibold placeholder-gray-400 transition-all duration-100 resize-none"
+                  style={{ background: "#FFFDF5" }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-push w-full py-4 border-4 border-black font-black uppercase tracking-wider text-black text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ background: "#FF6B6B", boxShadow: "6px 6px 0px 0px #000" }}
+              >
+                {loading ? "Creating..." : "Create Restaurant & Add Menu"}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

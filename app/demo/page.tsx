@@ -38,145 +38,248 @@ const RECOMMENDATIONS = [
 ]
 
 function MarginBadge({ margin }: { margin: number }) {
-  const color = margin >= 70 ? "bg-green-100 text-green-700" : margin >= 60 ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"
-  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${color}`}>{margin.toFixed(1)}%</span>
+  const bg = margin >= 70 ? "#22c55e" : margin >= 60 ? "#FFD93D" : "#FF6B6B";
+  return (
+    <span
+      className="text-xs font-black uppercase tracking-wide px-2 py-0.5 border-2 border-black"
+      style={{ background: bg }}
+    >
+      {margin.toFixed(1)}%
+    </span>
+  );
 }
 
 function PriorityBadge({ priority }: { priority: string }) {
-  const color = priority === "high" ? "bg-red-100 text-red-700" : priority === "medium" ? "bg-yellow-100 text-yellow-700" : "bg-blue-100 text-blue-700"
-  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${color}`}>{priority} priority</span>
+  const bg = priority === "high" ? "#FF6B6B" : priority === "medium" ? "#FFD93D" : "#C4B5FD";
+  return (
+    <span
+      className="text-xs font-black uppercase tracking-widest px-2 py-0.5 border-2 border-black"
+      style={{ background: bg }}
+    >
+      {priority} priority
+    </span>
+  );
 }
 
 export default function DemoPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: "#FFFDF5", fontFamily: "'Space Grotesk', sans-serif" }}>
       {/* Nav */}
-      <nav className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <ChefHat className="w-6 h-6 text-orange-500" />
-          <span className="font-bold text-gray-900">Menu Profit Optimizer</span>
+      <nav
+        className="px-6 py-3 flex items-center justify-between border-b-4 border-black"
+        style={{ background: "#FFFDF5" }}
+      >
+        <Link href="/" className="flex items-center gap-3">
+          <div
+            className="flex items-center justify-center w-9 h-9 border-4 border-black"
+            style={{ background: "#FFD93D", boxShadow: "3px 3px 0px 0px #000" }}
+          >
+            <ChefHat className="w-4 h-4 text-black" strokeWidth={3} />
+          </div>
+          <span className="font-black uppercase tracking-tight text-black">Menu Profit Optimizer</span>
         </Link>
         <div className="flex items-center gap-3">
-          <span className="text-sm bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-medium">Live Demo</span>
-          <Link href="/sign-up" className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors">
-            Try With Your Menu <ArrowRight className="w-4 h-4" />
+          <span
+            className="text-sm font-black uppercase tracking-widest px-3 py-1 border-4 border-black text-black"
+            style={{ background: "#C4B5FD", boxShadow: "3px 3px 0px 0px #000" }}
+          >
+            Live Demo
+          </span>
+          <Link
+            href="/sign-up"
+            className="btn-push flex items-center gap-2 px-4 py-2 border-4 border-black text-sm font-black uppercase tracking-wide text-black"
+            style={{ background: "#FF6B6B", boxShadow: "4px 4px 0px 0px #000" }}
+          >
+            Try With Your Menu <ArrowRight className="w-4 h-4" strokeWidth={3} />
           </Link>
         </div>
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 py-8">
         {/* Demo banner */}
-        <div className="bg-orange-50 border border-orange-200 rounded-xl px-5 py-3 mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-orange-800 text-sm">
-            <Zap className="w-4 h-4" />
-            <strong>Demo Mode</strong> — This is a real analysis of a sample restaurant. Sign up to analyze your own menu.
+        <div
+          className="border-4 border-black px-5 py-3 mb-8 flex items-center justify-between flex-wrap gap-3"
+          style={{ background: "#FFD93D", boxShadow: "6px 6px 0px 0px #000" }}
+        >
+          <div className="flex items-center gap-2 font-bold text-black text-sm">
+            <Zap className="w-4 h-4" strokeWidth={3} />
+            <strong className="uppercase tracking-wide">Demo Mode</strong> — This is a real analysis of a sample restaurant. Sign up to analyze your own menu.
           </div>
-          <Link href="/sign-up" className="text-orange-600 font-medium text-sm hover:underline">
+          <Link
+            href="/sign-up"
+            className="font-black uppercase tracking-wide text-sm text-black border-b-2 border-black"
+          >
             Get Started Free →
           </Link>
         </div>
 
         {/* Restaurant header */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                  <ChefHat className="w-5 h-5 text-orange-500" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900">{DEMO_RESTAURANT.name}</h1>
-                  <p className="text-gray-500 text-sm">{DEMO_RESTAURANT.cuisine} · {DEMO_RESTAURANT.location}</p>
-                </div>
+        <div
+          className="border-4 border-black p-6 mb-6 bg-white"
+          style={{ boxShadow: "8px 8px 0px 0px #000" }}
+        >
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-12 h-12 border-4 border-black flex items-center justify-center"
+                style={{ background: "#FFD93D", boxShadow: "4px 4px 0px 0px #000" }}
+              >
+                <ChefHat className="w-6 h-6 text-black" strokeWidth={3} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black uppercase tracking-tight text-black">{DEMO_RESTAURANT.name}</h1>
+                <p className="font-bold text-black text-sm uppercase tracking-wide">{DEMO_RESTAURANT.cuisine} · {DEMO_RESTAURANT.location}</p>
               </div>
             </div>
-            <div className="flex items-center gap-1 bg-orange-100 text-orange-700 px-3 py-1.5 rounded-full text-sm font-medium">
-              <Zap className="w-4 h-4" /> AI Analysis Complete
+            <div
+              className="flex items-center gap-1 px-3 py-1.5 border-4 border-black font-black uppercase tracking-wide text-sm text-black"
+              style={{ background: "#C4B5FD", boxShadow: "4px 4px 0px 0px #000" }}
+            >
+              <Zap className="w-4 h-4" strokeWidth={3} /> AI Analysis Complete
             </div>
           </div>
-          <p className="text-gray-700 mt-4 leading-relaxed">{DEMO_RESTAURANT.summary}</p>
+          <div
+            className="mt-4 p-4 border-4 border-black"
+            style={{ background: "#FFFDF5", borderLeftColor: "#C4B5FD", borderLeftWidth: "8px" }}
+          >
+            <p className="font-semibold text-black leading-relaxed">{DEMO_RESTAURANT.summary}</p>
+          </div>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Total Items", value: DEMO_RESTAURANT.total_items, icon: <BarChart3 className="w-5 h-5 text-blue-500" /> },
-            { label: "Avg Margin", value: `${DEMO_RESTAURANT.avg_margin}%`, icon: <TrendingUp className="w-5 h-5 text-green-500" /> },
-            { label: "High Margin (≥70%)", value: DEMO_RESTAURANT.high_margin_count, icon: <CheckCircle2 className="w-5 h-5 text-green-500" /> },
-            { label: "Need Repricing", value: DEMO_RESTAURANT.low_margin_count, icon: <AlertTriangle className="w-5 h-5 text-red-500" /> },
-          ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4">
+            { label: "Total Items", value: DEMO_RESTAURANT.total_items, icon: <BarChart3 className="w-6 h-6 text-black" strokeWidth={3} />, bg: "#FFD93D" },
+            { label: "Avg Margin", value: `${DEMO_RESTAURANT.avg_margin}%`, icon: <TrendingUp className="w-6 h-6 text-black" strokeWidth={3} />, bg: "#FF6B6B" },
+            { label: "High Margin (≥70%)", value: DEMO_RESTAURANT.high_margin_count, icon: <CheckCircle2 className="w-6 h-6 text-black" strokeWidth={3} />, bg: "#C4B5FD" },
+            { label: "Need Repricing", value: DEMO_RESTAURANT.low_margin_count, icon: <AlertTriangle className="w-6 h-6 text-black" strokeWidth={3} />, bg: "#FFFDF5" },
+          ].map((s) => (
+            <div
+              key={s.label}
+              className="border-4 border-black p-4"
+              style={{ background: s.bg, boxShadow: "6px 6px 0px 0px #000" }}
+            >
               <div className="mb-2">{s.icon}</div>
-              <div className="text-2xl font-bold text-gray-900">{s.value}</div>
-              <div className="text-sm text-gray-500">{s.label}</div>
+              <div className="text-3xl font-black text-black">{s.value}</div>
+              <div className="text-xs font-black uppercase tracking-wide text-black mt-1">{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* Revenue opportunity */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-5 flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <DollarSign className="w-6 h-6 text-green-600" />
+        <div
+          className="border-4 border-black p-5 flex items-center gap-4 mb-6"
+          style={{ background: "#FFD93D", boxShadow: "6px 6px 0px 0px #000" }}
+        >
+          <div
+            className="w-14 h-14 border-4 border-black flex items-center justify-center flex-shrink-0"
+            style={{ background: "#fff", boxShadow: "3px 3px 0px 0px #000" }}
+          >
+            <DollarSign className="w-7 h-7 text-black" strokeWidth={3} />
           </div>
           <div>
-            <div className="font-bold text-green-900 text-lg">+$187.50 potential revenue increase per order cycle</div>
-            <div className="text-green-700 text-sm">Based on implementing all {RECOMMENDATIONS.length} price recommendations</div>
+            <div className="font-black text-black text-xl uppercase tracking-tight">
+              +$187.50 potential revenue increase per order cycle
+            </div>
+            <div className="font-bold text-black text-sm uppercase tracking-wide mt-1">
+              Based on implementing all {RECOMMENDATIONS.length} price recommendations
+            </div>
           </div>
         </div>
 
         {/* Recommendations */}
         <div className="mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">AI Price Recommendations</h2>
-          <div className="space-y-3">
-            {RECOMMENDATIONS.map((rec, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 p-5">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{rec.name}</h4>
-                    <PriorityBadge priority={rec.priority} />
+          <h2 className="text-2xl font-black uppercase tracking-tight text-black mb-4">AI Price Recommendations</h2>
+          <div className="space-y-4">
+            {RECOMMENDATIONS.map((rec, i) => {
+              const priorityBg = rec.priority === "high" ? "#FF6B6B" : rec.priority === "medium" ? "#FFD93D" : "#C4B5FD";
+              return (
+                <div
+                  key={i}
+                  className="bg-white border-4 border-black p-5 relative"
+                  style={{ boxShadow: "8px 8px 0px 0px #000" }}
+                >
+                  <div
+                    className="absolute -top-3 -right-3 px-3 py-1 border-4 border-black font-black uppercase tracking-wider text-xs text-black"
+                    style={{ background: priorityBg, transform: "rotate(2deg)", boxShadow: "3px 3px 0px 0px #000" }}
+                  >
+                    {rec.priority} priority
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-center">
-                      <div className="text-xs text-gray-400">Current</div>
-                      <div className="text-lg font-bold text-gray-400 line-through">${rec.current}</div>
+                  <div className="flex items-start justify-between mb-3 flex-wrap gap-4 pr-16">
+                    <div>
+                      <h4 className="font-black text-black text-lg uppercase tracking-tight">{rec.name}</h4>
+                      <PriorityBadge priority={rec.priority} />
                     </div>
-                    <div className="text-orange-400">→</div>
-                    <div className="text-center">
-                      <div className="text-xs text-gray-400">Suggested</div>
-                      <div className="text-lg font-bold text-green-600">${rec.suggested}</div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-center">
+                        <div className="text-xs font-black uppercase tracking-wide text-black">Current</div>
+                        <div
+                          className="text-xl font-black text-black line-through px-2 py-1 border-2 border-black"
+                          style={{ background: "#f0f0f0" }}
+                        >
+                          ${rec.current}
+                        </div>
+                      </div>
+                      <div className="text-2xl font-black text-black">→</div>
+                      <div className="text-center">
+                        <div className="text-xs font-black uppercase tracking-wide text-black">Suggested</div>
+                        <div
+                          className="text-xl font-black px-2 py-1 border-2 border-black"
+                          style={{ background: "#22c55e", color: "#fff" }}
+                        >
+                          ${rec.suggested}
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  <p className="font-semibold text-black leading-relaxed text-sm">{rec.reasoning}</p>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed">{rec.reasoning}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Full menu table */}
         <div className="mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Full Menu Analysis</h2>
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <h2 className="text-2xl font-black uppercase tracking-tight text-black mb-4">Full Menu Analysis</h2>
+          <div
+            className="border-4 border-black overflow-hidden"
+            style={{ boxShadow: "8px 8px 0px 0px #000" }}
+          >
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead
+                className="border-b-4 border-black"
+                style={{ background: "#000" }}
+              >
                 <tr>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Item</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Category</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Cost</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Price</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Margin</th>
+                  <th className="text-left px-4 py-3 text-xs font-black uppercase tracking-wider text-white">Item</th>
+                  <th className="text-left px-4 py-3 text-xs font-black uppercase tracking-wider text-white">Category</th>
+                  <th className="text-right px-4 py-3 text-xs font-black uppercase tracking-wider text-white">Cost</th>
+                  <th className="text-right px-4 py-3 text-xs font-black uppercase tracking-wider text-white">Price</th>
+                  <th className="text-right px-4 py-3 text-xs font-black uppercase tracking-wider text-white">Margin</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
-                {MENU_ITEMS.sort((a, b) => a.margin - b.margin).map((item) => (
-                  <tr key={item.name} className="hover:bg-gray-50">
+              <tbody>
+                {[...MENU_ITEMS].sort((a, b) => a.margin - b.margin).map((item, idx) => (
+                  <tr
+                    key={item.name}
+                    className="border-b-2 border-black last:border-b-0"
+                    style={{ background: idx % 2 === 0 ? "#FFFDF5" : "#fff" }}
+                  >
                     <td className="px-4 py-3">
-                      <div className="font-medium text-gray-900 text-sm">{item.name}</div>
-                      {item.popular && <span className="text-xs text-orange-500">Popular</span>}
+                      <div className="font-bold text-black text-sm">{item.name}</div>
+                      {item.popular && (
+                        <span
+                          className="text-xs font-black uppercase tracking-wide px-2 py-0.5 border-2 border-black"
+                          style={{ background: "#FFD93D" }}
+                        >
+                          Popular
+                        </span>
+                      )}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{item.category}</td>
-                    <td className="px-4 py-3 text-right text-sm text-gray-600">${item.cost.toFixed(2)}</td>
-                    <td className="px-4 py-3 text-right text-sm font-medium text-gray-900">${item.price.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-black">{item.category}</td>
+                    <td className="px-4 py-3 text-right text-sm font-semibold text-black">${item.cost.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-right text-sm font-black text-black">${item.price.toFixed(2)}</td>
                     <td className="px-4 py-3 text-right"><MarginBadge margin={item.margin} /></td>
                   </tr>
                 ))}
@@ -186,14 +289,25 @@ export default function DemoPage() {
         </div>
 
         {/* CTA */}
-        <div className="bg-orange-500 rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Analyze Your Restaurant's Menu</h2>
-          <p className="text-orange-100 mb-6">Get AI-powered profit recommendations in under 2 minutes. Free to start.</p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-white text-orange-600 px-8 py-3 rounded-xl font-semibold hover:bg-orange-50 transition-colors">
-            Start Free Today <ArrowRight className="w-5 h-5" />
+        <div
+          className="border-4 border-black p-10 text-center"
+          style={{ background: "#000" }}
+        >
+          <h2 className="text-3xl font-black uppercase tracking-tight mb-2" style={{ color: "#FFFDF5" }}>
+            Analyze Your Restaurant&apos;s Menu
+          </h2>
+          <p className="font-semibold mb-8" style={{ color: "#FFD93D" }}>
+            Get AI-powered profit recommendations in under 2 minutes. Free to start.
+          </p>
+          <Link
+            href="/sign-up"
+            className="btn-push inline-flex items-center gap-2 px-8 py-4 border-4 border-white font-black uppercase tracking-wider text-black"
+            style={{ background: "#FFD93D", boxShadow: "6px 6px 0px 0px #fff" }}
+          >
+            Start Free Today <ArrowRight className="w-5 h-5" strokeWidth={3} />
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }
