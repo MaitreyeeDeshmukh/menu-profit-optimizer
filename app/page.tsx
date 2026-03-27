@@ -53,27 +53,18 @@ export default function Home() {
           AI analyzes every item on your menu, identifies pricing gaps, and delivers
           actionable recommendations to increase your margins by 20–40%.
         </p>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4 justify-center">
           {isSignedIn ? (
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors text-lg"
-            >
+            <Link href="/dashboard" className="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors text-lg">
               Go to Dashboard <ArrowRight className="w-5 h-5" />
             </Link>
           ) : (
             <>
-              <Link
-                href="/sign-up"
-                className="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors text-lg"
-              >
+              <Link href="/sign-up" className="flex items-center gap-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors text-lg">
                 Analyze My Menu Free <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link
-                href="/sign-in"
-                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors text-lg"
-              >
-                Sign In
+              <Link href="/demo" className="flex items-center gap-2 border-2 border-orange-400 text-orange-600 px-6 py-3 rounded-xl font-semibold hover:bg-orange-50 transition-colors text-lg">
+                View Live Demo
               </Link>
             </>
           )}
