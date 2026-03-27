@@ -26,28 +26,26 @@ export async function POST(req: Request) {
 
   const prompt = `Restaurant: ${restaurant.name} (${restaurant.cuisine_type}). Menu: ${menuStr}. For items with margin under 65%, suggest better prices. Return JSON only: {"summary":"...","recommendations":[{"item_name":"...","current_price":0,"suggested_price":0,"current_margin":0,"suggested_margin":70,"reasoning":"...","priority":"high|medium|low"}]}`
 
-  // Direct fetch to Anthropic (no SDK)
-  const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': process.env.ANTHROPIC_API_KEY!,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 800,
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  })
+  // Google Gemini (free tier)
+  const geminiRes = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GOOGLE_GENERATIVE_AI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 800, temperature: 0.3 },
+      }),
+    }
+  )
 
-  if (!anthropicRes.ok) {
-    const err = await anthropicRes.text()
-    return NextResponse.json({ error: `Anthropic API error: ${err}` }, { status: 500 })
+  if (!geminiRes.ok) {
+    const err = await geminiRes.text()
+    return NextResponse.json({ error: `Gemini API error: ${err}` }, { status: 500 })
   }
 
-  const anthropicData = await anthropicRes.json()
-  const text = anthropicData.content?.[0]?.text || ''
+  const geminiData = await geminiRes.json()
+  const text = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || ''
 
   let parsed = { summary: 'Analysis complete.', recommendations: [] as object[] }
   try {
