@@ -35,20 +35,24 @@ export default function RestaurantAnalysisPage({ params }: { params: Promise<{ i
   async function runAnalysis() {
     setAnalyzing(true);
     setError("");
-    const res = await fetch("/api/analyze", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ restaurant_id: id }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.error || "Analysis failed");
+    try {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ restaurant_id: id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Analysis failed — check your API keys in Vercel");
+        return;
+      }
+      setAnalysis(data);
+      setAnalyses((prev) => [data, ...prev]);
+    } catch (e) {
+      setError("Request timed out or failed. Error: " + String(e));
+    } finally {
       setAnalyzing(false);
-      return;
     }
-    setAnalysis(data);
-    setAnalyses((prev) => [data, ...prev]);
-    setAnalyzing(false);
   }
 
   if (loading) {
