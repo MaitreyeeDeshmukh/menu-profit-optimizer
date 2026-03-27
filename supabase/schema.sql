@@ -34,7 +34,12 @@ create table if not exists analyses (
   created_at timestamptz default now()
 );
 
--- Disable RLS for simplicity (use service role key in API)
-alter table restaurants disable row level security;
-alter table menu_items disable row level security;
-alter table analyses disable row level security;
+-- Enable RLS on all tables (service role key bypasses RLS, anon key cannot access anything)
+alter table restaurants enable row level security;
+alter table menu_items enable row level security;
+alter table analyses enable row level security;
+
+-- No public policies = anon key has ZERO access to any table
+-- All app access goes through Next.js API routes using SUPABASE_SERVICE_ROLE_KEY
+-- which automatically bypasses RLS. The app works exactly the same.
+-- This blocks anyone who grabs the public anon key from DevTools.
