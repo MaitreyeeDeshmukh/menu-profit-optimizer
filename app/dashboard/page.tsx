@@ -83,6 +83,13 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-gray-900">Your Restaurants</h1>
           <p className="text-gray-500 mt-1">{restaurants.length} restaurant{restaurants.length !== 1 ? "s" : ""} total</p>
         </div>
+        <button
+          onClick={loadDemo}
+          disabled={seeding}
+          className="flex items-center gap-2 border border-orange-400 text-orange-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-50 transition-colors disabled:opacity-50"
+        >
+          {seeding ? "Loading..." : "✨ Load Demo"}
+        </button>
         <Link
           href="/restaurants/new"
           className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors"
