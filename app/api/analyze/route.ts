@@ -4,6 +4,42 @@ import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
+function ruleBasedAnalysis(restaurantName: string, cuisineType: string, menuItems: any[]) {
+  const withMargins = menuItems.map(i => ({
+    ...i,
+    margin: i.selling_price > 0 ? ((i.selling_price - i.cost_price) / i.selling_price) * 100 : 0
+  }))
+
+  const recommendations = withMargins
+    .filter(i => i.margin < 65)
+    .sort((a, b) => a.margin - b.margin)
+    .slice(0, 6)
+    .map(i => {
+      const suggested = Math.ceil((i.cost_price / 0.30) * 100) / 100
+      return {
+        item_name: i.name,
+        current_price: i.selling_price,
+        suggested_price: suggested,
+        current_margin: Math.round(i.margin * 10) / 10,
+        suggested_margin: 70,
+        reasoning: i.margin < 40
+          ? `Very low margin of ${i.margin.toFixed(0)}%. Raising to $${suggested} targets a healthy 70% margin for ${cuisineType} cuisine.`
+          : `Margin of ${i.margin.toFixed(0)}% is below the 65% target. A price of $${suggested} would improve profitability.`,
+        priority: i.margin < 40 ? 'high' : i.margin < 55 ? 'medium' : 'low'
+      }
+    })
+
+  const avg = withMargins.reduce((s, i) => s + i.margin, 0) / withMargins.length
+  const low = withMargins.filter(i => i.margin < 50)
+  const high = withMargins.filter(i => i.margin >= 70)
+
+  const summary = low.length > 0
+    ? `${restaurantName} has an average margin of ${avg.toFixed(1)}%. ${low.length} item(s) including ${low.slice(0,2).map(i=>i.name).join(', ')} need immediate repricing to stay profitable.`
+    : `${restaurantName} has solid margins averaging ${avg.toFixed(1)}%. ${high.length} item(s) are performing above 70% — focus on promoting these.`
+
+  return { summary, recommendations, avg_margin: Math.round(avg * 10) / 10, high_margin_count: high.length, low_margin_count: low.length }
+}
+
 export async function POST(req: Request) {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -19,56 +55,53 @@ export async function POST(req: Request) {
   const { data: menuItems } = await db.from('menu_items').select('*').eq('restaurant_id', restaurant_id)
   if (!menuItems || menuItems.length === 0) return NextResponse.json({ error: 'No menu items found. Add items first.' }, { status: 400 })
 
-  // Build minimal menu string
-  const menuStr = menuItems.map(i =>
-    `${i.name}:cost=${i.cost_price},price=${i.selling_price}`
-  ).join(';')
+  let result = ruleBasedAnalysis(restaurant.name, restaurant.cuisine_type, menuItems)
 
-  const prompt = `Restaurant: ${restaurant.name} (${restaurant.cuisine_type}). Menu: ${menuStr}. For items with margin under 65%, suggest better prices. Return JSON only: {"summary":"...","recommendations":[{"item_name":"...","current_price":0,"suggested_price":0,"current_margin":0,"suggested_margin":70,"reasoning":"...","priority":"high|medium|low"}]}`
+  // Try Gemini AI — fall back to rule-based if anything fails
+  const apiKey = process.env.GEMINI_API_KEY
+  if (apiKey) {
+    try {
+      const menuStr = menuItems.map(i => `${i.name}:cost=$${i.cost_price},price=$${i.selling_price}`).join(';')
+      const prompt = `Restaurant: ${restaurant.name} (${restaurant.cuisine_type}). Menu: ${menuStr}. For items with margin under 65%, suggest better prices. Return JSON only: {"summary":"...","recommendations":[{"item_name":"...","current_price":0,"suggested_price":0,"current_margin":0,"suggested_margin":70,"reasoning":"...","priority":"high|medium|low"}]}`
 
-  // Google Gemini (free tier)
-  const geminiRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 800, temperature: 0.3 },
-      }),
+      // Try models in order
+      const models = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro', 'gemini-2.0-flash-lite']
+      for (const model of models) {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 800, temperature: 0.3 } }),
+          }
+        )
+        if (!res.ok) continue
+        const data = await res.json()
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+        if (!text) continue
+        const clean = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+        const parsed = JSON.parse(clean)
+        if (parsed.summary && parsed.recommendations) {
+          result = { ...result, summary: parsed.summary, recommendations: parsed.recommendations }
+        }
+        break
+      }
+    } catch {
+      // use rule-based result
     }
-  )
-
-  if (!geminiRes.ok) {
-    const err = await geminiRes.text()
-    return NextResponse.json({ error: `Gemini API error: ${err}` }, { status: 500 })
   }
-
-  const geminiData = await geminiRes.json()
-  const text = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || ''
-
-  let parsed = { summary: 'Analysis complete.', recommendations: [] as object[] }
-  try {
-    const clean = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
-    parsed = JSON.parse(clean)
-  } catch {
-    // keep defaults
-  }
-
-  const margins = menuItems.map(i => i.selling_price > 0 ? ((i.selling_price - i.cost_price) / i.selling_price) * 100 : 0)
-  const avg_margin = Math.round(margins.reduce((a, b) => a + b, 0) / margins.length * 10) / 10
 
   const { data: saved } = await db.from('analyses').insert({
     restaurant_id,
-    summary: parsed.summary || '',
-    recommendations: parsed.recommendations || [],
+    summary: result.summary,
+    recommendations: result.recommendations,
     total_items: menuItems.length,
-    avg_margin,
-    high_margin_count: margins.filter(m => m >= 70).length,
-    low_margin_count: margins.filter(m => m < 50).length,
+    avg_margin: result.avg_margin,
+    high_margin_count: result.high_margin_count,
+    low_margin_count: result.low_margin_count,
   }).select().single()
 
-  return NextResponse.json({ ...saved, recommendations: parsed.recommendations || [] })
+  return NextResponse.json({ ...saved, recommendations: result.recommendations })
 }
 
 export async function GET(req: Request) {
