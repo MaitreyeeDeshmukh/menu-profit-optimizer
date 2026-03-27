@@ -12,7 +12,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Menu Profit Optimizer — AI-Powered Restaurant Profitability",
   description:
-    "Analyze and optimize your restaurant menu pricing with AI-powered insights. Maximize profitability with Claude AI recommendations.",
+    "Analyze and optimize your restaurant menu pricing with AI-powered insights. Maximize profitability with smart recommendations.",
 };
 
 export default function RootLayout({

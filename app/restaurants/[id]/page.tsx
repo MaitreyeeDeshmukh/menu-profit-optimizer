@@ -142,7 +142,7 @@ export default function RestaurantAnalysisPage({ params }: { params: Promise<{ i
             </div>
             <h2 className="text-3xl font-black uppercase tracking-tight text-black mb-3">Ready to Analyze</h2>
             <p className="font-semibold text-black mb-8 max-w-md mx-auto">
-              Claude AI will analyze all your menu items, identify pricing opportunities, and generate
+              AI will analyze all your menu items, identify pricing opportunities, and generate
               specific recommendations to maximize profitability.
             </p>
             <button
@@ -168,7 +168,7 @@ export default function RestaurantAnalysisPage({ params }: { params: Promise<{ i
               <RefreshCw className="w-10 h-10 text-black animate-spin" strokeWidth={3} />
             </div>
             <h2 className="text-3xl font-black uppercase tracking-tight text-black mb-3">Analyzing Your Menu</h2>
-            <p className="font-semibold text-black">Claude AI is reviewing all your menu items for profitability...</p>
+            <p className="font-semibold text-black">AI is reviewing all your menu items for profitability...</p>
           </div>
         )}
 
@@ -212,7 +212,7 @@ export default function RestaurantAnalysisPage({ params }: { params: Promise<{ i
                   style={{ background: "#C4B5FD", boxShadow: "4px 4px 0px 0px #000" }}
                 >
                   <Zap className="w-4 h-4" strokeWidth={3} />
-                  Powered by Claude
+                  AI Analysis
                 </div>
               </div>
               <p className="font-semibold text-black leading-relaxed">{analysis.summary}</p>

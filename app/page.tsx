@@ -70,7 +70,7 @@ export default function Home() {
           style={{ background: "#C4B5FD", boxShadow: "4px 4px 0px 0px #000" }}
         >
           <Zap className="w-4 h-4 text-black" strokeWidth={3} />
-          Powered by Claude AI
+          Powered by AI
         </div>
 
         <h1
