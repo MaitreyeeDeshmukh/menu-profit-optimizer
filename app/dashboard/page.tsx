@@ -8,6 +8,18 @@ import { ChefHat, Plus, TrendingUp, Trash2, ArrowRight } from "lucide-react";
 export default function DashboardPage() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [seeding, setSeeding] = useState(false);
+
+  async function loadDemo() {
+    setSeeding(true);
+    const res = await fetch("/api/seed", { method: "POST" });
+    const data = await res.json();
+    if (data.success) {
+      const updated = await fetch("/api/restaurants").then(r => r.json());
+      setRestaurants(Array.isArray(updated) ? updated : []);
+    }
+    setSeeding(false);
+  }
 
   useEffect(() => {
     fetch("/api/restaurants")
@@ -53,6 +65,13 @@ export default function DashboardPage() {
           <Plus className="w-5 h-5" />
           Add Your First Restaurant
         </Link>
+        <button
+          onClick={loadDemo}
+          disabled={seeding}
+          className="flex items-center gap-2 border-2 border-orange-400 text-orange-600 px-6 py-3 rounded-xl font-semibold hover:bg-orange-50 transition-colors disabled:opacity-50"
+        >
+          {seeding ? "Loading..." : "✨ Load Demo Restaurant"}
+        </button>
       </div>
     );
   }
